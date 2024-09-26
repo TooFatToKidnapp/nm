@@ -1,0 +1,4 @@
+*.o
+obj/
+ft_nm.dSYM
+ft_nm
