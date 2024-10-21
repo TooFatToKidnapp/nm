@@ -1,4 +1,5 @@
 *.o
 obj/
-ft_nm.dSYM
+*.dSYM
 ft_nm
+.vscode
