@@ -4,7 +4,7 @@ CCFLAGS = -Wall -Wextra -Werror -pedantic -std=c99 -g -fsanitize=address,undefin
 SRC_INCLUDE = ./includes/nm.h
 NAME = ft_nm
 SRC_PATH = ./srcs
-SRC = $(addprefix $(SRC_PATH)/, main.c parse_cli_arguments.c utils.c error.c)
+SRC = $(addprefix $(SRC_PATH)/, main.c parse_cli_arguments.c utils.c error.c nm.c)
 OBJ_PATH = ./obj
 OBJ = $(SRC:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
 

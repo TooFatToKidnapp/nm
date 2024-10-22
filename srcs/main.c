@@ -11,34 +11,17 @@
 
 int32_t main(int32_t ac, char **av)
 {
-  uint8_t * file_name = NULL;
-  uint32_t file_fd = -1;
-  if (2 > ac) {
-    file_fd = get_file_handler(file_name);
-    printf("-file_fd = %d\n", file_fd);
+  e_cli_args args = {0};
 
-    if (0 > clone(file_fd)) {
-      char buff[300] = {0};
-      _strlcat(buff, "Failed to close file [", sizeof(buff));
-      _strlcat(buff, (char *)file_name, sizeof(buff));
-      _strlcat(buff, "]", sizeof(buff));
-      panic(buff, 1);
-    }
+  uint32_t file_count = parse_and_count_cli_args(av, &args);
+  if (file_count == 0) {
+    nm(NULL, &args);
   } else {
-    for (int32_t file_count = 1; file_count < ac ; ++file_count) {
-      file_name = (uint8_t*)av[file_count];
-      file_fd = get_file_handler(file_name);
-
-      printf("--file_fd = %d\n", file_fd);
-      if (0 > clone(file_fd)) {
-        char buff[300] = {0};
-        _strlcat(buff, "Failed to close file [", sizeof(buff));
-        _strlcat(buff, (char *)file_name, sizeof(buff));
-        _strlcat(buff, "]", sizeof(buff));
-        panic(buff, 1);
+    for (int32_t i = 1; i < ac; ++i) {
+      if (is_arg(av[i]) == false) {
+        nm(av[i], &args);
       }
     }
   }
-
   return 0;
 }
