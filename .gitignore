@@ -3,3 +3,5 @@ obj/
 *.dSYM
 ft_nm
 .vscode
+.ssh_env
+.vagrant

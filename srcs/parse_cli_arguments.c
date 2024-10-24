@@ -31,7 +31,7 @@ int32_t get_file_handler(char *file_path) {
     file_path = "./a.out";
   }
   int32_t fd = -1;
-  fd = open(file_path, O_RDONLY | O_SYMLINK);
+  fd = open(file_path, O_RDONLY);
   if (0 > fd) {
     char buff[300] = {0};
     _strlcat(buff, "Failed to open file [", sizeof(buff));

@@ -1,5 +1,5 @@
 CC = gcc
-CCFLAGS = -Wall -Wextra -Werror -pedantic -std=c99 -g -fsanitize=address,undefined,integer
+CCFLAGS = -Wall -Wextra -Werror -pedantic -std=c99 -g -fsanitize=address,undefined
 
 SRC_INCLUDE = ./includes/nm.h
 NAME = ft_nm
