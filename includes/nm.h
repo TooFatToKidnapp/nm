@@ -4,10 +4,14 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include <stdbool.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <ar.h>
+#include <elf.h>
 
 typedef enum cli_args {
   ARG_P = 1 << 0,
@@ -18,6 +22,13 @@ typedef enum cli_args {
 } e_cli_args;
 
 
+typedef struct elf_file {
+  char* file_name;
+  char* file_content;
+  int64_t     file_size;
+  int32_t     file_fd;
+} t_elf_file;
+
 /*
   ** utils
 */
@@ -25,12 +36,14 @@ typedef enum cli_args {
 uint64_t _strlen(const char * str);
 uint64_t  _strlcat(char *dst, const char *src, uint64_t dstsize);
 int32_t _strncmp(const char *s1, const char *s2, uint32_t n);
+int32_t _memcmp(const void *s1, const void *s2, uint64_t n);
 
 /*
   ** err handlers
 */
 
 void panic(const char * msg, uint32_t status_code);
+void clean_up(void * file_mapping, size_t file_size, int32_t fd);
 
 /*
   ** argument validation
