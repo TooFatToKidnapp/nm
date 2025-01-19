@@ -9,6 +9,12 @@
 // https://wiki.osdev.org/ELF_Tutorial
 // https://en.wikipedia.org/wiki/Nm_(Unix)
 
+/*
+  ** compile into big endian format
+  ** sudo apt-get install gcc-powerpc-linux-gnu
+  ** powerpc-linux-gnu-gcc -m32 -o 32_bit_big_endan main.c -I../includes
+*/
+
 int32_t main(int32_t ac, char **av)
 {
   e_cli_args args = {0};

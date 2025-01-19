@@ -27,16 +27,20 @@ bool is_elf_byte_order_matching_os(char * file) {
   else return false;
 }
 
+
+/// validates the elf file header
+/// check's the following:
+///  - the files first 4 magic number's to verify the file type
+///  - the CLASS byte that identifies the suported architecture. 64 or 32 bit
+///  - the DATA byte that specifies the data encoding. little-endian or big-endian
+///  - the VERSION byte that specifies the version number of the ELF specification
 bool is_valid_elf_file_ident(t_elf_file *file) {
 
-  if (16 > file->file_size) {
-    clean_up(file->file_content, file->file_size, file->file_fd);
-    panic("Invalid elf ident size", 1);
-  }
+  if (16 > file->file_size) false;
   is_elf_byte_order_matching_os(file->file_content);
   if (_memcmp(file->file_content, ELFMAG, SELFMAG) != 0
     || file->file_content[EI_CLASS] <= 0 || file->file_content[EI_CLASS] > 2
-    || file->file_content[EI_DATA] <= 0 || file->file_content[EI_CLASS] > 2
+    || file->file_content[EI_DATA] <= 0 || file->file_content[EI_DATA] > 2
     || file->file_content[EI_VERSION] != EV_CURRENT) return false;
   else return true;
 }
@@ -44,8 +48,6 @@ bool is_valid_elf_file_ident(t_elf_file *file) {
 
 
 void nm(char * file_path, e_cli_args* args) {
-
-  printf("file path = [%s]\n", file_path);
   t_elf_file file_info = {0};
   file_info.file_fd = get_file_handler(file_path);
 
@@ -69,7 +71,7 @@ void nm(char * file_path, e_cli_args* args) {
   if (file_info.file_content[EI_CLASS] == ELFCLASS64) {
     // 64 bit adder nm implementation
   } else {
-    // 32 bit adder nm implementation
+    nm32(&file_info, args);
   }
   (void) args;
 
