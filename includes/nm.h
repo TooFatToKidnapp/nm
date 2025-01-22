@@ -12,6 +12,7 @@
 #include <sys/mman.h>
 #include <ar.h>
 #include <elf.h>
+#include "list.h"
 
 typedef enum cli_args {
   P = 1 << 0,
@@ -40,7 +41,8 @@ int32_t _memcmp(const void *s1, const void *s2, uint64_t n);
 bool is_elf_byte_order_matching_os(char * file);
 uint32_t read_as_uint32_t(uint32_t ptr);
 uint16_t read_as_uint16_t(uint16_t ptr);
-
+uint32_t get_32_bit_symbol_type(Elf32_Ehdr *ehdr, Elf32_Shdr* shdr, Elf32_Sym *symbol);
+uint8_t match_section_type(char* section_name, uint8_t type, uint32_t bind);
 
 /*
   ** err handlers

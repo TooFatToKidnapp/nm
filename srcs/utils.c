@@ -68,3 +68,37 @@ int32_t _memcmp(const void *s1, const void *s2, uint64_t n)
   }
   return (0);
 }
+
+uint8_t match_section_type(char* section_name, uint8_t type, uint32_t bind) {
+  uint8_t c = 0;
+  if (_strncmp(section_name, ".symtab", _strlen(".symtab")) == 0
+    || _strncmp(section_name, ".strtab", _strlen(".strtab") == 0)
+    || _strncmp(section_name, ".shstrtab", _strlen(".shstrtab")) == 0) {
+      c = 'a';
+    }
+  if (_strncmp(section_name, ".gnu.hash", _strlen(".gnu.hash")) == 0
+      || _strncmp(section_name, ".rodata", _strlen(".rodata")) == 0
+      || _strncmp(section_name, ".dynstr", _strlen(".dynstr")) == 0
+      || _strncmp(section_name, ".rela.plt", _strlen(".rela.plt")) == 0
+      || _strncmp(section_name, ".rel.plt", _strlen(".rel.plt")) == 0
+      || _strncmp(section_name, ".SUNW_version", _strlen(".SUNW_version")) == 0
+      || _strncmp(section_name, ".rela.bss", _strlen(".rela.bss")) == 0
+      || _strncmp(section_name, ".rela.got", _strlen(".rela.got")) == 0
+      || _strncmp(section_name, ".gnu.version_r", _strlen(".gnu.version_r")) == 0)
+    {
+      c = 'R';
+      if (bind == STB_LOCAL) c += 32;
+    }
+  if (_strncmp(section_name, ".debug_", _strlen(".debug_")) == 0) {
+    c = 'N';
+  }
+  if (_strncmp(section_name, ".comment", _strlen(".comment")) == 0
+      || _strncmp(section_name, ".copyright", _strlen(".copyright")) == 0
+      || _strncmp(section_name, ".gnu_debug", _strlen(".gnu_debug")) == 0
+      || _strncmp(section_name, ".ident", _strlen(".ident")) == 0
+      || _strncmp(section_name, ".SUNW", _strlen(".SUNW")) == 0) {
+        c = 'n';
+      }
+  if (c) return c;
+  return type;
+}
