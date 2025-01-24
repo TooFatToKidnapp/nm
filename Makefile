@@ -1,10 +1,10 @@
 CC = gcc
 CCFLAGS = -Wall -Wextra -Werror -pedantic -std=c99 -g -fsanitize=address,undefined,leak
 
-SRC_INCLUDE = ./includes/nm.h
+SRC_INCLUDE = ./includes/nm.h ./includes/list.h
 NAME = ft_nm
 SRC_PATH = ./srcs
-SRC = $(addprefix $(SRC_PATH)/, main.c parse_cli_arguments.c utils.c error.c read_bytes.c nm.c nm32.c symbol_type.c)
+SRC = $(addprefix $(SRC_PATH)/, main.c parse_cli_arguments.c utils.c error.c read_bytes.c nm.c nm32.c symbol_type.c list.c)
 OBJ_PATH = ./obj
 OBJ = $(SRC:$(SRC_PATH)/%.c=$(OBJ_PATH)/%.o)
 

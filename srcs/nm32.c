@@ -33,7 +33,7 @@ int32_t parse32_section_table(t_elf_file* file_info, e_cli_args *args,
   char *sh_string_table_ptr = (char*)(file_info->file_content + shstr_sh_offset);
   Elf32_Sym *sym_table = (Elf32_Sym*)(file_info->file_content + symtab_sh_offset);
   uint32_t sym_table_len = symtab_sh_size / sizeof(Elf32_Sym);
-  // t_list * symbol_lst = NULL;
+  t_list * symbol_lst = NULL;
   for (uint32_t i = 1; i < sym_table_len; ++i) {
     uint32_t symtab_st_name = read_as_uint32_t(sym_table[i].st_name);
     char* name = string_table_ptr + symtab_st_name;
@@ -46,9 +46,11 @@ int32_t parse32_section_table(t_elf_file* file_info, e_cli_args *args,
       }
     }
     type = match_section_type(name, type, ELF32_ST_BIND(sym_table[i].st_info));
+    push_back_node(&symbol_lst, format_symbol(name, type, read_as_uint32_t(sym_table[i].st_value), sym_table + i, st_shndx));
   }
-
-
+  (void)args;
+  print_lst(&symbol_lst);
+  clear_lst(&symbol_lst);
   return 0;
 }
 
