@@ -102,3 +102,23 @@ uint8_t match_section_type(char* section_name, uint8_t type, uint32_t bind) {
   if (c) return c;
   return type;
 }
+
+int32_t case_insensitive_strncmp(const char* s1, const char* s2, uint32_t len)
+{
+  uint32_t i = 0;
+  while (i < len && s1[i] && s2[i])
+  {
+    char c1 = s1[i];
+    char c2 = s2[i];
+    if (c1 >= 'A' && c1 <= 'Z')
+      c1 += 'a' - 'A';
+    if (c2 >= 'A' && c2 <= 'Z')
+      c2 += 'a' - 'A';
+    if (c1 != c2)
+      return (c1 - c2);
+    i++;
+  }
+  if (i < len)
+    return ((uint8_t)s1[i] - (uint8_t)s2[i]);
+  return 0;
+}

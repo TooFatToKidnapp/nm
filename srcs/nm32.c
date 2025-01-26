@@ -49,7 +49,8 @@ int32_t parse32_section_table(t_elf_file* file_info, e_cli_args *args,
     push_back_node(&symbol_lst, format_symbol(name, type, read_as_uint32_t(sym_table[i].st_value), sym_table + i, st_shndx));
   }
   (void)args;
-  print_lst(&symbol_lst);
+  print_elf_32_symbols(&symbol_lst, args);
+  // print_lst(&symbol_lst)
   clear_lst(&symbol_lst);
   return 0;
 }
