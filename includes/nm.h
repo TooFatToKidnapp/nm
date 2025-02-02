@@ -13,6 +13,10 @@
 #include <ar.h>
 #include <elf.h>
 
+#define DBG(fmt, ...) \
+  fprintf(stderr, "DEBUG: %s:%d: " fmt, __FILE__, __LINE__, ##__VA_ARGS__);
+
+
 typedef enum cli_args {
   P = 1 << 0,
   G = 1 << 1,
@@ -31,7 +35,7 @@ typedef struct elf_file {
 
 typedef struct symbol {
   char *name;
-  uint64_t value;
+  uint32_t value;
   uint8_t type;
   void *symbol_ptr;
   uint16_t segment_header_index;

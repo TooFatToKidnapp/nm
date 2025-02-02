@@ -50,7 +50,6 @@ bool is_valid_elf_file_ident(t_elf_file *file) {
 void nm(char * file_path, e_cli_args* args) {
   t_elf_file file_info = {0};
   file_info.file_fd = get_file_handler(file_path);
-
   struct stat file_stat = {0};
 
   if (0 > fstat(file_info.file_fd, &file_stat)) {
@@ -71,6 +70,7 @@ void nm(char * file_path, e_cli_args* args) {
   if (file_info.file_content[EI_CLASS] == ELFCLASS64) {
     // 64 bit adder nm implementation
   } else {
+    DBG("%s\n", "32 bit elf format");
     nm32(&file_info, args);
   }
   (void) args;

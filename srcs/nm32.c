@@ -1,5 +1,19 @@
 #include "../includes/nm.h"
 
+static bool has_symbols_32(Elf32_Ehdr* ehdr, Elf32_Shdr* shdr) {
+  for (int i = 0; i < ehdr->e_shnum; ++i) {
+    if (shdr[i].sh_type == SHT_SYMTAB || shdr[i].sh_type == SHT_DYNSYM) {
+        size_t entsize = shdr[i].sh_entsize;
+        if (entsize == 0) continue;
+        size_t num = shdr[i].sh_size / entsize;
+        if (num > 0) {
+          return false;
+        }
+    }
+  }
+  return true;
+}
+
 int32_t parse32_section_table(t_elf_file* file_info, e_cli_args *args,
     uint32_t symtab_index, Elf32_Shdr* section_header ,Elf32_Ehdr* elf_header) {
 
@@ -34,6 +48,7 @@ int32_t parse32_section_table(t_elf_file* file_info, e_cli_args *args,
   Elf32_Sym *sym_table = (Elf32_Sym*)(file_info->file_content + symtab_sh_offset);
   uint32_t sym_table_len = symtab_sh_size / sizeof(Elf32_Sym);
   t_list * symbol_lst = NULL;
+  DBG("sym_table_len = %d\n", sym_table_len);
   for (uint32_t i = 1; i < sym_table_len; ++i) {
     uint32_t symtab_st_name = read_as_uint32_t(sym_table[i].st_name);
     char* name = string_table_ptr + symtab_st_name;
@@ -46,11 +61,11 @@ int32_t parse32_section_table(t_elf_file* file_info, e_cli_args *args,
       }
     }
     type = match_section_type(name, type, ELF32_ST_BIND(sym_table[i].st_info));
+    //DBG("i == %d | type == %c | value = %8x | name = %s\n", i, type, read_as_uint32_t(sym_table[i].st_value), name);
     push_back_node(&symbol_lst, format_symbol(name, type, read_as_uint32_t(sym_table[i].st_value), sym_table + i, st_shndx));
   }
-  (void)args;
   print_elf_32_symbols(&symbol_lst, args);
-  // print_lst(&symbol_lst)
+  // print_lst(&symbol_lst);
   clear_lst(&symbol_lst);
   return 0;
 }
@@ -71,6 +86,11 @@ int32_t nm32(t_elf_file* file_info, e_cli_args* args) {
   }
 
   Elf32_Shdr *section_header_ptr = (Elf32_Shdr*)(file_info->file_content + e_shoff);
+  if (has_symbols_32(ehdr, section_header_ptr) == false) {
+    DBG("ft_nm: %s: no symbols\n", file_info->file_name);
+    return 0;
+  }
+
   uint16_t section_header_table_index = read_as_uint16_t(ehdr->e_shstrndx);
   uint32_t section_header_type = read_as_uint32_t(section_header_ptr[section_header_table_index].sh_type);
   uint16_t section_header_count = read_as_uint16_t(ehdr->e_shnum);
@@ -89,6 +109,7 @@ int32_t nm32(t_elf_file* file_info, e_cli_args* args) {
     panic("Not symbol table found", -1);
     return 1;
   }
+  DBG("section_header_count = %d\n", section_header_count);
 
   for (uint32_t i = 0; i < section_header_count; ++i) {
     uint32_t section_header_name = read_as_uint32_t(section_header_ptr[i].sh_name);
@@ -102,5 +123,7 @@ int32_t nm32(t_elf_file* file_info, e_cli_args* args) {
       return parse32_section_table(file_info, args, i, section_header_ptr, ehdr);
     }
   }
+    DBG("%s\n", "HERE2");
+
   return 0;
 }
