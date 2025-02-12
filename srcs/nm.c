@@ -70,7 +70,7 @@ void nm(char * file_path, e_cli_args* args) {
   if (file_info.file_content[EI_CLASS] == ELFCLASS64) {
     // 64 bit adder nm implementation
   } else {
-    DBG("%s\n", "32 bit elf format");
+    // DBG("%s\n", "32 bit elf format");
     nm32(&file_info, args);
   }
   (void) args;

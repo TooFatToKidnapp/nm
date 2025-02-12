@@ -43,8 +43,7 @@ int32_t get_file_handler(char *file_path) {
 }
 
 bool is_arg_set(e_cli_args arg, e_cli_args * args) {
-  if (0 >= (arg & *args))return false;
-  return true;
+  return (arg & *args) > 0;
 }
 
 bool is_arg(char * arg) {

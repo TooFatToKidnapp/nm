@@ -1,72 +1,80 @@
 #include "../includes/nm.h"
 
-static void swap_symbols(t_list* lhs, t_list* rhs) {
-  if (!lhs || !rhs || lhs == rhs) return;
-  t_symbol* tmp = lhs->content;
-  lhs->content = rhs->content;
-  rhs->content = tmp;
-}
-
-
 void sort_lst(t_list* list, int (*cmp) (t_list* lhs, t_list* rhs)) {
-  uint64_t list_len;
+	t_list	*tmp;
+	t_list	*tmp2;
+	void	*content;
+	tmp = list;
+	while (tmp)
+	{
+		tmp2 = tmp->next;
+		while (tmp2)
+		{
+			if (cmp(tmp, tmp2) > 0)
+			{
+				content = tmp->content;
+				tmp->content = tmp2->content;
+				tmp2->content = content;
+			}
+			tmp2 = tmp2->next;
+		}
+		tmp = tmp->next;
+	}
+}
 
-  if (!list || !cmp || 1 >=(list_len = lst_len(list))) return;
-  uint32_t i;
-  uint32_t j = list_len;
-  bool swap = true;
+int compare_value(t_list *a, t_list *b) {
+  t_symbol *symbol_a = a->content;
+  t_symbol *symbol_b = b->content;
+  return (symbol_a->value - symbol_b->value);
+}
 
-  while (swap) {
-    i = 0;
-    swap = false;
-    while (i + 1 < j) {
-      t_list* lhs = get_symbol_at_index(list, i, list_len);
-      t_list* rhs = get_symbol_at_index(list, i + 1, list_len);
-      if (cmp(lhs, rhs) > 0) {
-        swap = true;
-        swap_symbols(lhs, rhs);
-      }
-      i++;
+
+int compare_symbol(t_list *a, t_list *b) {
+  t_symbol *symbol_a = a->content;
+  t_symbol *symbol_b = b->content;
+  const char *s1 = symbol_a->name;
+  const char *s2 = symbol_b->name;
+
+  if (s1 == NULL || s2 == NULL)
+    return (0);
+  while (*s1 && *s2) {
+    while (*s1 && !_isalnum(*s1))
+      s1++;
+    while (*s2 && !_isalnum(*s2))
+      s2++;
+    if (_tolower(*s1) != _tolower(*s2)) {
+      return ((unsigned char) _tolower(*s1) - (unsigned char) _tolower(*s2));
     }
-    j--;
+    s1++;
+    s2++;
   }
+  if (*s1 == *s2) {
+    if      (symbol_b->type == 'W' && symbol_a->type == 'D') return -1;
+    else if (symbol_b->type == 'D' && symbol_a->type == 'W') return 1;
+    else if (symbol_b->type == 't' && symbol_a->type == 'T') return -1;
+    else if (symbol_b->type == 'T' && symbol_a->type == 't') return 1;
+    else if (symbol_b->type == 'T' && symbol_a->type == 'W') return -1;
+    else if (symbol_b->type == 'W' && symbol_a->type == 'T') return 1;
+    return (compare_value(a, b));
+  }
+  return ((unsigned char) *s1 - (unsigned char) *s2);
 }
 
-static int32_t item_cmp(t_list* lhs, t_list* rhs) {
-  const t_symbol *lhs_symbol = lhs->content;
-  const t_symbol *rhs_symbol = rhs->content;
-  const char *l_name = lhs_symbol->name;
-  const char *r_name = rhs_symbol->name;
-  uint64_t l_name_len = _strlen(l_name);
-  uint64_t r_name_len = _strlen(r_name);
-  int32_t cmp = case_insensitive_strncmp(r_name, l_name, (l_name_len > r_name_len ? l_name_len : r_name_len));
-  if (cmp == 0) cmp = lhs_symbol->segment_header_index - rhs_symbol->segment_header_index;
-  if (cmp == 0) {
-    if (rhs_symbol->type == 'W' && lhs_symbol->type == 'D') cmp = -1;
-    else if (rhs_symbol->type == 'D' && lhs_symbol->type == 'W') cmp = 1;
-    else if (rhs_symbol->type == 't' && lhs_symbol->type == 'T') cmp = -1;
-    else if (rhs_symbol->type == 'T' && lhs_symbol->type == 't') cmp = 1;
-    else if (rhs_symbol->type == 'T' && lhs_symbol->type == 'W') cmp = -1;
-    else if (rhs_symbol->type == 'D' && lhs_symbol->type == 'T') cmp = 1;
-  }
-  if (cmp == 0) {
-    return l_name_len - r_name_len;
-  }
-  return cmp;
-}
+
 
 int32_t sort_symbol_by_value_asc(t_list* lhs, t_list* rhs) {
-  if (!lhs || !rhs) return 0;
+  if (!lhs || !rhs) {
+      return 0;
+  }
   t_symbol* lhs_sym = lhs->content;
   t_symbol* rhs_sym = rhs->content;
-  if (!lhs_sym || !rhs_sym) return 0;
   return lhs_sym->value - rhs_sym->value;
 }
 
 int32_t sort_symbol_asc(t_list* lhs, t_list* rhs) {
-  return item_cmp(lhs, rhs);
+  return compare_symbol(lhs, rhs);
 }
 
 int32_t sort_symbol_dsc(t_list* lhs, t_list* rhs) {
-  return item_cmp(rhs, lhs);
+  return compare_symbol(rhs, lhs);
 }

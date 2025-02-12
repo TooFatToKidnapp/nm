@@ -69,8 +69,8 @@ int32_t _memcmp(const void *s1, const void *s2, uint64_t n)
   return (0);
 }
 
-uint8_t match_section_type(char* section_name, uint8_t type, uint32_t bind) {
-  uint8_t c = 0;
+uint8_t match_section_type(const char* section_name, int8_t type, uint32_t bind) {
+  int8_t c = 0;
   if (_strncmp(section_name, ".symtab", _strlen(".symtab")) == 0
     || _strncmp(section_name, ".strtab", _strlen(".strtab") == 0)
     || _strncmp(section_name, ".shstrtab", _strlen(".shstrtab")) == 0) {
@@ -103,22 +103,15 @@ uint8_t match_section_type(char* section_name, uint8_t type, uint32_t bind) {
   return type;
 }
 
-int32_t case_insensitive_strncmp(const char* s1, const char* s2, uint32_t len)
-{
-  uint32_t i = 0;
-  while (i < len && s1[i] && s2[i])
-  {
-    char c1 = s1[i];
-    char c2 = s2[i];
-    if (c1 >= 'A' && c1 <= 'Z')
-      c1 += 'a' - 'A';
-    if (c2 >= 'A' && c2 <= 'Z')
-      c2 += 'a' - 'A';
-    if (c1 != c2)
-      return (c1 - c2);
-    i++;
-  }
-  if (i < len)
-    return ((uint8_t)s1[i] - (uint8_t)s2[i]);
+
+int32_t	_tolower(int32_t c) {
+  if (c >= 'A' && c <= 'Z')
+    return (c + 32);
+  return (c);
+}
+
+int32_t _isalnum(int32_t c) {
+  if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
+    return 1;
   return 0;
 }
