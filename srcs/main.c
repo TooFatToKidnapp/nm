@@ -21,13 +21,16 @@ int32_t main(int32_t ac, char **av)
 
   uint32_t file_count = parse_and_count_cli_args(av, &args);
   if (file_count == 0) {
-    nm(NULL, &args);
+    return nm(NULL, &args);
   } else {
+    bool is_err = false;
     for (int32_t i = 1; i < ac; ++i) {
       if (is_arg(av[i]) == false) {
-        nm(av[i], &args);
+        if (nm(av[i], &args) == 1)
+          is_err = true;
       }
     }
+    return (int32_t)is_err;
   }
   return 0;
 }

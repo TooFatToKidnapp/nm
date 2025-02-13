@@ -22,14 +22,14 @@ void sort_lst(t_list* list, int (*cmp) (t_list* lhs, t_list* rhs)) {
 	}
 }
 
-int compare_value(t_list *a, t_list *b) {
-  t_symbol *symbol_a = a->content;
-  t_symbol *symbol_b = b->content;
-  return (symbol_a->value - symbol_b->value);
-}
+// int compare_value(t_list *a, t_list *b) {
+//   t_symbol *symbol_a = a->content;
+//   t_symbol *symbol_b = b->content;
+//   return (symbol_a->value - symbol_b->value);
+// }
 
 
-int compare_symbol(t_list *a, t_list *b) {
+int32_t compare_symbol(t_list *a, t_list *b) {
   t_symbol *symbol_a = a->content;
   t_symbol *symbol_b = b->content;
   const char *s1 = symbol_a->name;
@@ -43,7 +43,7 @@ int compare_symbol(t_list *a, t_list *b) {
     while (*s2 && !_isalnum(*s2))
       s2++;
     if (_tolower(*s1) != _tolower(*s2)) {
-      return ((unsigned char) _tolower(*s1) - (unsigned char) _tolower(*s2));
+      return ((uint8_t) _tolower(*s1) - (uint8_t) _tolower(*s2));
     }
     s1++;
     s2++;
@@ -55,9 +55,9 @@ int compare_symbol(t_list *a, t_list *b) {
     else if (symbol_b->type == 'T' && symbol_a->type == 't') return 1;
     else if (symbol_b->type == 'T' && symbol_a->type == 'W') return -1;
     else if (symbol_b->type == 'W' && symbol_a->type == 'T') return 1;
-    return (compare_value(a, b));
+    return (sort_symbol_by_value_asc(a, b));
   }
-  return ((unsigned char) *s1 - (unsigned char) *s2);
+  return ((uint8_t) *s1 - (uint8_t) *s2);
 }
 
 

@@ -38,6 +38,7 @@ int32_t get_file_handler(char *file_path) {
     _strlcat(buff, file_path, sizeof(buff));
     _strlcat(buff, "]", sizeof(buff));
     panic(buff, -1);
+    return -1;
   }
   return fd;
 }

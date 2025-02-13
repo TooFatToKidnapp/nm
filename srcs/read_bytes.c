@@ -2,7 +2,7 @@
 
 static void flip_endian(void *ptr, size_t s) {
   uint8_t *data = (uint8_t*)ptr;
-  uint8_t buff[32] = {0};
+  uint8_t buff[64] = {0};
   for (size_t i = 0; i < s; ++i) {
     buff[i] = data[s - 1 - i];
   }
@@ -30,3 +30,11 @@ uint16_t read_as_uint16_t(uint16_t value) {
 
 }
 
+uint64_t read_as_uint64_t(uint64_t value) {
+  uint64_t res = value;
+  if (!is_elf_byte_order_matching_os(NULL)) {
+    flip_endian(&res, sizeof(uint64_t));
+  }
+  return res;
+
+}

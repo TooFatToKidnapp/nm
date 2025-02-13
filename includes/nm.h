@@ -49,6 +49,16 @@ typedef struct list {
 } t_list;
 
 
+
+/*
+  ** formating
+*/
+
+void print_symbol_details(uint64_t value, char type, char *name, bool is_32_sym_type, bool has_value);
+void print_elf_32_symbols(t_list** head, e_cli_args* args);
+void print_elf_64_symbols(t_list** head, e_cli_args* args);
+t_symbol *format_symbol(char *name, uint8_t type, uint64_t value, void *ptr, uint16_t index);
+
 /*
   ** list
 */
@@ -56,8 +66,6 @@ typedef struct list {
 void clear_lst(t_list **head);
 t_list *build_node(t_symbol *content);
 void push_back_node(t_list **head, t_symbol *content);
-t_symbol *format_symbol(char *name, uint8_t type, uint64_t value, Elf32_Sym *ptr, uint16_t index);
-void print_elf_32_symbols(t_list** head, e_cli_args* args);
 uint64_t lst_len(t_list *head);
 t_list * get_symbol_at_index(t_list* head, uint64_t index, uint64_t list_len);
 
@@ -84,7 +92,9 @@ int32_t _memcmp(const void *s1, const void *s2, uint64_t n);
 bool is_elf_byte_order_matching_os(char * file);
 uint32_t read_as_uint32_t(uint32_t ptr);
 uint16_t read_as_uint16_t(uint16_t ptr);
+uint64_t read_as_uint64_t(uint64_t value);
 uint32_t get_32_bit_symbol_type(Elf32_Ehdr *ehdr, Elf32_Shdr* shdr, const Elf32_Sym *symbol);
+uint32_t get_64_bit_symbol_type(Elf64_Ehdr *ehdr, Elf64_Shdr* shdr, const Elf64_Sym *symbol);
 uint8_t match_section_type(const char* section_name, int8_t type, uint32_t bind);
 int32_t	_tolower(int32_t c);
 int32_t _isalnum(int32_t c);
@@ -109,8 +119,9 @@ bool is_arg(char * arg);
   ** src implementation
 */
 
-void nm(char * file_path, e_cli_args* args);
+int32_t nm(char * file_path, e_cli_args* args);
 int32_t nm32(t_elf_file* file_info, e_cli_args* args);
+int32_t nm64(t_elf_file *file_info, e_cli_args *args);
 
 #endif
 

@@ -46,33 +46,38 @@ bool is_valid_elf_file_ident(t_elf_file *file) {
 }
 
 
-
-void nm(char * file_path, e_cli_args* args) {
+int32_t nm(char * file_path, e_cli_args* args) {
   t_elf_file file_info = {0};
   file_info.file_fd = get_file_handler(file_path);
+  if (-1 == file_info.file_fd) {
+    return 1;
+  }
   struct stat file_stat = {0};
 
   if (0 > fstat(file_info.file_fd, &file_stat)) {
     clean_up(NULL, 0 , file_info.file_fd);
-    panic("Failed to get file stat", 1);
+    panic("Failed to get file stat", -1);
+    return 1;
   }
   file_info.file_size = file_stat.st_size;
   file_info.file_content = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, file_info.file_fd, 0);
   if (file_info.file_content == MAP_FAILED) {
     clean_up(NULL, 0 , file_info.file_fd);
-    panic("Failed to load file into memory", 1);
+    panic("Failed to load file into memory", -1);
+    return 1;
   }
   file_info.file_name = file_path;
   if (is_valid_elf_file_ident(&file_info) == false) {
     clean_up(file_info.file_content, file_info.file_size , file_info.file_fd);
-    panic("Invalid elf file Indent", 1);
+    panic("Invalid elf file Indent", -1);
+    return 1;
   }
   if (file_info.file_content[EI_CLASS] == ELFCLASS64) {
     // 64 bit adder nm implementation
+    return nm64(&file_info, args);
   } else {
     // DBG("%s\n", "32 bit elf format");
-    nm32(&file_info, args);
+    return nm32(&file_info, args);
   }
-  (void) args;
-
+  return 1;
 }
