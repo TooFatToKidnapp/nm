@@ -12,8 +12,9 @@
 #include <sys/mman.h>
 #include <ar.h>
 #include <elf.h>
-#include <limits.h>
+#include <linux/limits.h>
 #include <ctype.h>
+#include <stdio.h>
 
 #define DBG(fmt, ...) \
   fprintf(stdout, "DEBUG: %s:%d: " fmt, __FILE__, __LINE__, ##__VA_ARGS__);
@@ -37,7 +38,7 @@ typedef struct elf_file {
 
 typedef struct symbol {
   char *name;
-  int32_t value;
+  uint64_t value;
   uint8_t type;
   void *symbol_ptr;
   uint16_t segment_header_index;
@@ -75,10 +76,10 @@ t_list * get_symbol_at_index(t_list* head, uint64_t index, uint64_t list_len);
   ** sort
 */
 
-void sort_lst(t_list* list, int (*cmp) (t_list* lhs, t_list* rhs));
-int32_t sort_symbol_dsc(t_list* lhs, t_list* rhs);
-int32_t sort_symbol_asc(t_list* lhs, t_list* rhs);
-int32_t sort_symbol_by_value_asc(t_list* lhs, t_list* rhs);
+void sort_lst(t_list* list, int64_t (*cmp) (t_list* lhs, t_list* rhs));
+int64_t sort_symbol_dsc(t_list* lhs, t_list* rhs);
+int64_t sort_symbol_asc(t_list* lhs, t_list* rhs);
+int64_t sort_symbol_by_value_asc(t_list* lhs, t_list* rhs);
 
 
 /*
@@ -95,7 +96,7 @@ uint16_t read_as_uint16_t(uint16_t ptr);
 uint64_t read_as_uint64_t(uint64_t value);
 uint32_t get_32_bit_symbol_type(Elf32_Ehdr *ehdr, Elf32_Shdr* shdr, const Elf32_Sym *symbol);
 uint32_t get_64_bit_symbol_type(Elf64_Ehdr *ehdr, Elf64_Shdr* shdr, const Elf64_Sym *symbol);
-uint8_t match_section_type(const char* section_name, int8_t type, uint32_t bind);
+uint8_t match_section_type(const char* section_name, int8_t type, uint64_t bind);
 int32_t	_tolower(int32_t c);
 int32_t _isalnum(int32_t c);
 

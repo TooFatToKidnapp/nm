@@ -3,7 +3,7 @@
 static bool has_symbols_64(t_elf_file *file_info, Elf64_Ehdr *ehdr, Elf64_Shdr *shdr)
 {
   uint16_t e_shnum = read_as_uint16_t(ehdr->e_shnum);
-  uint16_t e_shstrndx = read_as_uint16_t(ehdr->e_shstrndx);
+  uint32_t e_shstrndx = read_as_uint16_t(ehdr->e_shstrndx);
   if (e_shstrndx == SHN_XINDEX)
   {
     e_shstrndx = read_as_uint32_t(shdr[0].sh_link);
@@ -87,12 +87,12 @@ int32_t nm64(t_elf_file *file_info, e_cli_args *args)
 {
   if (file_info->file_size < sizeof(Elf64_Ehdr))
   {
-    panic("File too small", -1);
+    panic("File format not recognized", -1);
     return 1;
   }
 
   Elf64_Ehdr *ehdr = (Elf64_Ehdr *)file_info->file_content;
-  uint32_t e_shoff = read_as_uint64_t(ehdr->e_shoff);
+  uint64_t e_shoff = read_as_uint64_t(ehdr->e_shoff);
   if (e_shoff > file_info->file_size)
   {
     panic("Invalid e_shoff value", -1);
@@ -102,7 +102,11 @@ int32_t nm64(t_elf_file *file_info, e_cli_args *args)
   Elf64_Shdr *section_header_ptr = (Elf64_Shdr *)(file_info->file_content + e_shoff);
   if (has_symbols_64(file_info, ehdr, section_header_ptr) == false)
   {
-    DBG("ft_nm: %s: no symbols\n", file_info->file_name);
+    char buff[PATH_MAX + 100] = {0};
+    _strlcat(buff, "ft_nm: ", sizeof(buff));
+    _strlcat(buff, file_info->file_name, sizeof(buff));
+    _strlcat(buff, ": no symbols", sizeof(buff));
+    panic(buff, -1);
     return 0;
   }
 

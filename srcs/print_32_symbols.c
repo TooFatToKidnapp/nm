@@ -4,10 +4,8 @@ static void print_32_bit_symbol_table_entry(t_symbol* symbol) {
   uint16_t symbol_header_index = read_as_uint16_t(((Elf32_Sym*)symbol->symbol_ptr)->st_shndx);
   uint32_t value = read_as_uint32_t(((Elf32_Sym*)symbol->symbol_ptr)->st_value);
   if (symbol_header_index != SHN_UNDEF)
-    // printf("%08x %c %s\n", value, symbol->type, symbol->name);
     print_symbol_details(value, symbol->type, symbol->name, true, true);
   else
-    // printf("%s %1c %s\n", "        ", symbol->type, symbol->name);
     print_symbol_details(0, symbol->type, symbol->name, true, false);
 
 }

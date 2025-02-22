@@ -14,7 +14,7 @@ uint32_t parse_and_count_cli_args(char ** arg_list, e_cli_args* args) {
     } else if (!_strncmp(arg_list[i], "-r\0", 3)) {
       *args |= R;
     } else if (arg_list[i][0] == '-') {
-      char buff[300] = {0};
+      char buff[PATH_MAX + 100] = {0};
       _strlcat(buff, "Invalid Argument [", sizeof(buff));
       _strlcat(buff, arg_list[i], sizeof(buff));
       _strlcat(buff, "]", sizeof(buff));
@@ -33,7 +33,7 @@ int32_t get_file_handler(char *file_path) {
   int32_t fd = -1;
   fd = open(file_path, O_RDONLY);
   if (0 > fd) {
-    char buff[300] = {0};
+    char buff[PATH_MAX + 100] = {0};
     _strlcat(buff, "Failed to open file [", sizeof(buff));
     _strlcat(buff, file_path, sizeof(buff));
     _strlcat(buff, "]", sizeof(buff));

@@ -1,6 +1,6 @@
 #include "../includes/nm.h"
 
-void sort_lst(t_list* list, int (*cmp) (t_list* lhs, t_list* rhs)) {
+void sort_lst(t_list* list, int64_t (*cmp) (t_list* lhs, t_list* rhs)) {
 	t_list	*tmp;
 	t_list	*tmp2;
 	void	*content;
@@ -22,14 +22,7 @@ void sort_lst(t_list* list, int (*cmp) (t_list* lhs, t_list* rhs)) {
 	}
 }
 
-// int compare_value(t_list *a, t_list *b) {
-//   t_symbol *symbol_a = a->content;
-//   t_symbol *symbol_b = b->content;
-//   return (symbol_a->value - symbol_b->value);
-// }
-
-
-int32_t compare_symbol(t_list *a, t_list *b) {
+int64_t compare_symbol(t_list *a, t_list *b) {
   t_symbol *symbol_a = a->content;
   t_symbol *symbol_b = b->content;
   const char *s1 = symbol_a->name;
@@ -62,7 +55,7 @@ int32_t compare_symbol(t_list *a, t_list *b) {
 
 
 
-int32_t sort_symbol_by_value_asc(t_list* lhs, t_list* rhs) {
+int64_t sort_symbol_by_value_asc(t_list* lhs, t_list* rhs) {
   if (!lhs || !rhs) {
       return 0;
   }
@@ -71,10 +64,10 @@ int32_t sort_symbol_by_value_asc(t_list* lhs, t_list* rhs) {
   return lhs_sym->value - rhs_sym->value;
 }
 
-int32_t sort_symbol_asc(t_list* lhs, t_list* rhs) {
+int64_t sort_symbol_asc(t_list* lhs, t_list* rhs) {
   return compare_symbol(lhs, rhs);
 }
 
-int32_t sort_symbol_dsc(t_list* lhs, t_list* rhs) {
+int64_t sort_symbol_dsc(t_list* lhs, t_list* rhs) {
   return compare_symbol(rhs, lhs);
 }

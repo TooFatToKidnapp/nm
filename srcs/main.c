@@ -14,6 +14,7 @@
   ** sudo apt-get install gcc-powerpc-linux-gnu
   ** powerpc-linux-gnu-gcc -m32 -o 32_bit_big_endan main.c -I../includes
 */
+// https://multiversx.com/builders/tutorials
 
 int32_t main(int32_t ac, char **av)
 {

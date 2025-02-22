@@ -2,12 +2,14 @@
 
 uint32_t get_64_bit_symbol_type(Elf64_Ehdr *ehdr, Elf64_Shdr* shdr, const Elf64_Sym *symbol) {
   uint32_t bind = ELF64_ST_BIND(symbol->st_info);
-  uint32_t type = ELF64_ST_TYPE(symbol->st_info);
+  uint64_t type = ELF64_ST_TYPE(symbol->st_info);
   uint16_t section_index = read_as_uint16_t(symbol->st_shndx);
   uint16_t shnum = read_as_uint16_t(ehdr->e_shnum);
   uint32_t c = '?';
 
-  if (bind == STB_GNU_UNIQUE) {
+  if (type == STT_GNU_IFUNC) {
+    c = 'i';
+  } else if (bind == STB_GNU_UNIQUE) {
     c = 'u';
   } else if (bind == STB_WEAK) {
     if (type == STT_OBJECT) {
@@ -24,7 +26,13 @@ uint32_t get_64_bit_symbol_type(Elf64_Ehdr *ehdr, Elf64_Shdr* shdr, const Elf64_
   } else if (section_index < shnum) {
     Elf64_Shdr *section = &shdr[section_index];
     uint32_t sect_type = read_as_uint32_t(section->sh_type);
-    uint32_t sect_flags = read_as_uint64_t(section->sh_flags);
+    uint64_t sect_flags = read_as_uint64_t(section->sh_flags);
+
+    if (sect_flags == SHT_DYNSYM) {
+      if (type == STT_FUNC || type == STT_GNU_IFUNC) {
+        c = 'i';
+      }
+    }
     if (sect_type == SHT_NOBITS && (sect_flags & (SHF_ALLOC | SHF_WRITE)) == (SHF_ALLOC | SHF_WRITE)) {
       c = 'B';  // BSS (uninitialized data)
     } else if (sect_type == SHT_PROGBITS) {
@@ -62,7 +70,10 @@ uint32_t get_32_bit_symbol_type(Elf32_Ehdr *ehdr, Elf32_Shdr* shdr, const Elf32_
   uint16_t shnum = read_as_uint16_t(ehdr->e_shnum);
   uint32_t c = '?';
 
-  if (bind == STB_GNU_UNIQUE) {
+
+  if (type == STT_GNU_IFUNC) {
+    c = 'i';
+  } else if (bind == STB_GNU_UNIQUE) {
     c = 'u';
   } else if (bind == STB_WEAK) {
     if (type == STT_OBJECT) {
@@ -80,6 +91,12 @@ uint32_t get_32_bit_symbol_type(Elf32_Ehdr *ehdr, Elf32_Shdr* shdr, const Elf32_
     Elf32_Shdr *section = &shdr[section_index];
     uint32_t sect_type = read_as_uint32_t(section->sh_type);
     uint32_t sect_flags = read_as_uint32_t(section->sh_flags);
+
+    if (sect_flags == SHT_DYNSYM) {
+      if (type == STT_FUNC || type == STT_GNU_IFUNC) {
+        c = 'i';
+      }
+    }
     if (sect_type == SHT_NOBITS && (sect_flags & (SHF_ALLOC | SHF_WRITE)) == (SHF_ALLOC | SHF_WRITE)) {
       c = 'B';  // BSS (uninitialized data)
     } else if (sect_type == SHT_PROGBITS) {

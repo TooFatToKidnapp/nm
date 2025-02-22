@@ -1,7 +1,7 @@
 #include "../includes/nm.h"
 
 static int32_t get_platform_byte_order() {
-  uint32_t i = 1;
+  int8_t i = 1;
   /*
     ** i == 00000001 in memory
     ** *(char*)&i pointes to the first byte of i
@@ -34,8 +34,7 @@ bool is_elf_byte_order_matching_os(char * file) {
 ///  - the CLASS byte that identifies the suported architecture. 64 or 32 bit
 ///  - the DATA byte that specifies the data encoding. little-endian or big-endian
 ///  - the VERSION byte that specifies the version number of the ELF specification
-bool is_valid_elf_file_ident(t_elf_file *file) {
-
+static bool is_valid_elf_file_ident(t_elf_file *file) {
   if (16 > file->file_size) false;
   is_elf_byte_order_matching_os(file->file_content);
   if (_memcmp(file->file_content, ELFMAG, SELFMAG) != 0
@@ -73,10 +72,8 @@ int32_t nm(char * file_path, e_cli_args* args) {
     return 1;
   }
   if (file_info.file_content[EI_CLASS] == ELFCLASS64) {
-    // 64 bit adder nm implementation
     return nm64(&file_info, args);
   } else {
-    // DBG("%s\n", "32 bit elf format");
     return nm32(&file_info, args);
   }
   return 1;

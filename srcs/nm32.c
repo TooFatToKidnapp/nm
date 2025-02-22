@@ -1,9 +1,9 @@
 #include "../includes/nm.h"
 
-bool has_symbols_32(t_elf_file *file_info, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr)
+static bool has_symbols_32(t_elf_file *file_info, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr)
 {
   uint16_t e_shnum = read_as_uint16_t(ehdr->e_shnum);
-  uint16_t e_shstrndx = read_as_uint16_t(ehdr->e_shstrndx);
+  uint32_t e_shstrndx = read_as_uint16_t(ehdr->e_shstrndx);
   if (e_shstrndx == SHN_XINDEX)
   {
     e_shstrndx = read_as_uint32_t(shdr[0].sh_link);
@@ -31,7 +31,7 @@ bool has_symbols_32(t_elf_file *file_info, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr)
   return false;
 }
 
-int32_t parse32_section_table(t_elf_file *file_info, e_cli_args *args,
+static int32_t parse32_section_table(t_elf_file *file_info, e_cli_args *args,
                               uint32_t symtab_index, Elf32_Shdr *section_header, Elf32_Ehdr *elf_header)
 {
 
@@ -97,7 +97,11 @@ int32_t nm32(t_elf_file *file_info, e_cli_args *args)
   Elf32_Shdr *section_header_ptr = (Elf32_Shdr *)(file_info->file_content + e_shoff);
   if (has_symbols_32(file_info, ehdr, section_header_ptr) == false)
   {
-    DBG("ft_nm: %s: no symbols\n", file_info->file_name);
+    char buff[PATH_MAX + 100] = {0};
+    _strlcat(buff, "ft_nm: ", sizeof(buff));
+    _strlcat(buff, file_info->file_name, sizeof(buff));
+    _strlcat(buff, ": no symbols", sizeof(buff));
+    panic(buff, -1);
     return 0;
   }
 

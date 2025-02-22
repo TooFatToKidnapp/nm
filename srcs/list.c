@@ -105,4 +105,3 @@ void print_symbol_details(uint64_t value, char type, char *name, bool is_32_sym_
   write(1, buffer, index);
   write(1, "\n", 1);
 }
-
